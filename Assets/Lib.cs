@@ -16,6 +16,22 @@ namespace CustomLib
         {
             return angle * ((float)Math.PI / 180);
         }
+
+        // This function turns a local angle into a global by adding on 
+        // all of the angles up to the current one
+        public float GlobalAngle(int max, float[] localAngles)
+        {
+            int index = 0;
+            float angle = 0;
+
+            while (index <= max)
+            {
+                angle += localAngles[index];
+                index++;
+            }
+
+            return angle;
+        }
     }
-    
+
 }

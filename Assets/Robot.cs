@@ -25,17 +25,18 @@ public class Robot : MonoBehaviour
     [Space(10)]
     public Segment[] Robot_Segments;
 
+    //Simpelton start
     [HideInInspector]
     public static Robot currentRobot;
-
     public void Awake()
     {
         currentRobot = this;
     }
+    //Simpeltoon end
 
     void Start()
     {
-        // Set starting position for robot
+        // Set a starting position for robot
         ConnectSegments(true);
     }
 
@@ -54,46 +55,35 @@ public class Robot : MonoBehaviour
             Vector2 angleVector = upWardCondition ? Vector2.up : new Vector2(Mathf.Cos(c.AngleToRad(Robot_Segments[i].gAngle)), Mathf.Sin(c.AngleToRad(Robot_Segments[i].gAngle)));
          // Vector2 angleVector = upWardCondition ? Vector2.up : new Vector2(Mathf.Cos(Robot_Segments[i].gAngle * (Mathf.PI / 180)), Mathf.Sin(Robot_Segments[i].gAngle * (Mathf.PI / 180)));
 
-            if (i == 0)
-            {
+            Robot_Segments[i].startPoint = (i == 0) ? Vector2.zero : Robot_Segments[i - 1].endPoint;
 
-                Robot_Segments[i].startPoint = Vector2.zero;
+            Vector2 segUpLenght = angleVector * Robot_Segments[i].a;
 
-                Vector2 segUpLenght = angleVector * Robot_Segments[i].a;
-
-                Robot_Segments[i].endPoint = Robot_Segments[i].startPoint + segUpLenght;
-            }
-            else
-            {
-                Robot_Segments[i].startPoint = Robot_Segments[i - 1].endPoint;
-
-                Vector2 segUpLenght = angleVector * Robot_Segments[i].a;
-
-                Robot_Segments[i].endPoint = Robot_Segments[i].startPoint + segUpLenght;
-            }
+            Robot_Segments[i].endPoint = Robot_Segments[i].startPoint + segUpLenght;
 
             Robot_Segments[i].currentLenght = (Robot_Segments[i].endPoint - Robot_Segments[i].startPoint).magnitude;
 
         }
     }
 
-
+    // This function recives the calculated values from Calculation.cs and applies the values to the segments
+    // the only values that matter are the angles since they will be used to move the segments
+    // 1) Save the angles in an array 
+    // 2) Apply the angles to each segment 
+    // 3) Give the global angle to the segments
     public void NewSegmentValues(float pwx, float pwy, float v1, float v2, float v3)
     {
-        Conversion c = new Conversion();
+        Conversion c = new Conversion(); // Lib
 
-        int rLength = Robot_Segments.Length;
         float[] localAngles = { v1, v2, v3 };
 
-        Robot_Segments[2].endPoint.x = pwx;
-        Robot_Segments[2].endPoint.y = pwy;
+        int rLength = Robot_Segments.Length;
 
-        //add info to local and global variables
-
+        // Add info to segments for local and global variables
         for (int i = 0; i < rLength; i++)
         {
-            Robot_Segments[i].theta = localAngles[i];
-            Robot_Segments[i].gAngle = v1 + v2 * c.BoolToInt((i > 0)) + v3 * c.BoolToInt((i > 1));
+            Robot_Segments[i].theta  = localAngles[i];
+            Robot_Segments[i].gAngle = c.GlobalAngle(i, localAngles);
         }
 
         // connect the segments
