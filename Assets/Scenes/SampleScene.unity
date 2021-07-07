@@ -2564,6 +2564,7 @@ GameObject:
   - component: {fileID: 2009142385}
   - component: {fileID: 2009142386}
   - component: {fileID: 2009142387}
+  - component: {fileID: 2009142388}
   m_Layer: 0
   m_Name: Robot
   m_TagString: Untagged
@@ -2635,20 +2636,24 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 62f4c1b1f0036bc419ba22d8320b7a72, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  ImpValues:
+  IVs:
     toolPosition: {x: 0, y: 0}
-    phi: 22
+    phi: 0
     a1: 0
     a2: 0
     a3: 0
-  CalValues:
-    pwx: 0
-    pwy: 0
-    v1: 0
-    v2: 0
-    v3: 0
-    alpha: 0
-    beta: 0
+--- !u!114 &2009142388
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2009142384}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7fe9863811971a64c8e8491134c1b91f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &2062606832
 GameObject:
   m_ObjectHideFlags: 0
