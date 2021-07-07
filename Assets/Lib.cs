@@ -7,14 +7,18 @@ namespace CustomLib
 {
     public class Conversion
     {
-        public int BoolToInt(bool x)
+        public int Bool2Int(bool x)
         {
             return (x == true) ? 1 : 0;
         }
 
-        public float AngleToRad(float angle)
+        public float Angle2Rad(float angle)
         {
             return angle * ((float)Math.PI / 180);
+        }
+        public float Rad2Angle(float rad)
+        {
+            return rad * (180/(float)Math.PI);
         }
 
         // This function turns a local angle into a global by adding on 

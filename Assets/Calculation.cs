@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using CustomLib;
 
 [System.Serializable]
 public struct RequiredValues
@@ -13,37 +14,28 @@ public struct RequiredValues
     public float a3;
 };
 
-
-[System.Serializable]
-public struct CalculatedValues
-{
-    public float pwx, pwy;
-    public float v1, v2, v3;
-    public float alpha, beta;
-};
-
 public class Calculation : MonoBehaviour
 {
+    public RequiredValues IVs;
 
-    public RequiredValues ImpValues;
-    public CalculatedValues CalValues;
+    private Conversion _conv = new Conversion();
 
-    [HideInInspector]
+    //              Singleton start               //
     public static Calculation current;
-
     private void Awake()
     {
         current = this;
     }
+    //              Singleton end                 //
 
     // Get the importante values that are needed for calculation
     public void GetValues(Vector2 toolPos)
     {
-        ImpValues.toolPosition = toolPos;
-        ImpValues.a1 = Robot.currentRobot.Robot_Segments[0].a;
-        ImpValues.a2 = Robot.currentRobot.Robot_Segments[1].a;
-        ImpValues.a3 = Robot.currentRobot.Robot_Segments[2].a;
-        ImpValues.phi = Mathf.Acos(ImpValues.toolPosition.x / ImpValues.toolPosition.magnitude) * (180 / Mathf.PI);
+        IVs.toolPosition = toolPos;
+        IVs.a1 = Robot.currentRobot.Robot_Segments[0].a;
+        IVs.a2 = Robot.currentRobot.Robot_Segments[1].a;
+        IVs.a3 = Robot.currentRobot.Robot_Segments[2].a;
+        IVs.phi = _conv.Rad2Angle(Mathf.Acos(IVs.toolPosition.x / IVs.toolPosition.magnitude));
 
         CalculateValues();
     }
@@ -55,42 +47,42 @@ public class Calculation : MonoBehaviour
         float v1, v2, v3;
         float alpha, beta;
 
-        pwx = ImpValues.toolPosition.x - ImpValues.a3 * Mathf.Cos(ImpValues.phi * (Mathf.PI / 180));
-        pwy = ImpValues.toolPosition.y - ImpValues.a3 * Mathf.Sin(ImpValues.phi * (Mathf.PI / 180));
+        pwx = IVs.toolPosition.x - IVs.a3 * Mathf.Cos(_conv.Angle2Rad(IVs.phi));
+        pwy = IVs.toolPosition.y - IVs.a3 * Mathf.Sin(_conv.Angle2Rad(IVs.phi));
 
-        //V2 = ((pwx)^2+(pwy)^2-(a(1))^2-(a(2))^2)/(2*a(1)*a(2))
-        v2 = (Mathf.Pow(pwx, 2) + Mathf.Pow(pwy, 2) - Mathf.Pow(ImpValues.a1, 2) - Mathf.Pow(ImpValues.a2, 2)) / (2 * ImpValues.a1 * ImpValues.a2);
-        v2 = Mathf.Acos(v2) * (180 / Mathf.PI);
+        float pwx2 = Mathf.Pow(pwx, 2);
+        float pwy2 = Mathf.Pow(pwy, 2);
+        float a12  = Mathf.Pow(IVs.a1, 2);
+        float a22  = Mathf.Pow(IVs.a2, 2);
 
-        c = Mathf.Sqrt(Mathf.Pow(pwx, 2) + Mathf.Pow(pwy, 2));
-        print(c);
-        alpha = Mathf.Acos(pwx / c) * (180 / Mathf.PI);
+        v2 = (pwx2 + pwy2 - a12 - a22) / (2 * IVs.a1 * IVs.a2);
+        v2 = _conv.Rad2Angle(Mathf.Acos(v2));
 
-        //beta = ((pwx)^2+(pwy)^2+(a(1))^2-(a(2))^2)/(2*a(1)*sqrt((pwx)^2+(pwy)^2))
-        beta = (Mathf.Pow(pwx, 2) + Mathf.Pow(pwy, 2) + Mathf.Pow(ImpValues.a1, 2) - Mathf.Pow(ImpValues.a2, 2)) / (2 * ImpValues.a1 * c);
-        beta = Mathf.Acos(beta) * (180 / Mathf.PI);
+        c = Mathf.Sqrt(pwx2 + pwy2);
+        alpha = _conv.Rad2Angle(Mathf.Acos(pwx / c));
+
+        beta = (pwx2 + pwy2 + a12 - a22) / (2 * IVs.a1 * c);
+        beta = _conv.Rad2Angle(Mathf.Acos(beta));
         v1 = alpha - beta;
-        v3 = ImpValues.phi - v1 - v2;
-
-        CalValues.pwx = pwx;
-        CalValues.pwy = pwy;
-        CalValues.v1 = v1;
-        CalValues.v2 = v2;
-        CalValues.v3 = v3;
-        CalValues.alpha = alpha;
-        CalValues.beta = beta;
+        v3 = IVs.phi - v1 - v2;
 
         // I need to send the info back to the robot
-        // It needs to know about pwx and pwy cuz thats the startpoint of segment 3
-        // end point is tool end point
-        // local but also global angle which for v2 and v3 which are 
+        // It needs to know about the local and global angles which are 
+        // calculated by adding angles before them, for v2 and v3 its:
         // gv2 = v1 + v2
         // gv3 = v1 + v2 + v3
-        Robot.currentRobot.NewSegmentValues(pwx, pwy, v1, v2, v3);
+
+        float[] localAngles = { v1, v2, v3 };
+        float[] globalAngles = { 0, 0, 0 };
+
+        for (int i = 0; i < 3; i++)
+        {
+            globalAngles[i] = _conv.GlobalAngle(i, localAngles);
+        }
+
+        Robot.currentRobot.NewSegmentValues(localAngles, globalAngles);
 
         UserResults.current.ShowValues(pwx, pwy, v1, v2, v3);
-
     }
-
 
 }

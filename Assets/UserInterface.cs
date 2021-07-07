@@ -8,7 +8,7 @@ public class UserInterface : MonoBehaviour
     public TMP_InputField XInput;
     public TMP_InputField YInput;
 
-
+    // Button
     public void TestValues() 
     {
         Vector2 x = new Vector2(float.Parse(XInput.text), float.Parse(YInput.text));

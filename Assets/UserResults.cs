@@ -6,12 +6,13 @@ public class UserResults : MonoBehaviour
 {
     TMP_Text _textBox;
 
+    //              Singleton start               //
     public static UserResults current;
-
     private void Awake()
     {
         current = this;
     }
+    //              Singleton end                 //
 
     private void Start()
     {

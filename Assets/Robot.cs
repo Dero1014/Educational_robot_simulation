@@ -25,14 +25,14 @@ public class Robot : MonoBehaviour
     [Space(10)]
     public Segment[] Robot_Segments;
 
-    //Simpelton start
-    [HideInInspector]
+
+    //              Singleton end                 //    
     public static Robot currentRobot;
     public void Awake()
     {
         currentRobot = this;
     }
-    //Simpeltoon end
+    //              Singleton end                 //
 
     void Start()
     {
@@ -52,7 +52,7 @@ public class Robot : MonoBehaviour
 
         for (int i = 0; i < rLength; i++)
         {
-            Vector2 angleVector = upWardCondition ? Vector2.up : new Vector2(Mathf.Cos(c.AngleToRad(Robot_Segments[i].gAngle)), Mathf.Sin(c.AngleToRad(Robot_Segments[i].gAngle)));
+            Vector2 angleVector = upWardCondition ? Vector2.up : new Vector2(Mathf.Cos(c.Angle2Rad(Robot_Segments[i].gAngle)), Mathf.Sin(c.Angle2Rad(Robot_Segments[i].gAngle)));
          // Vector2 angleVector = upWardCondition ? Vector2.up : new Vector2(Mathf.Cos(Robot_Segments[i].gAngle * (Mathf.PI / 180)), Mathf.Sin(Robot_Segments[i].gAngle * (Mathf.PI / 180)));
 
             Robot_Segments[i].startPoint = (i == 0) ? Vector2.zero : Robot_Segments[i - 1].endPoint;
@@ -71,11 +71,9 @@ public class Robot : MonoBehaviour
     // 1) Save the angles in an array 
     // 2) Apply the angles to each segment 
     // 3) Give the global angle to the segments
-    public void NewSegmentValues(float pwx, float pwy, float v1, float v2, float v3)
+    public void NewSegmentValues(float[] localAngles, float[] globalAngles)
     {
         Conversion c = new Conversion(); // Lib
-
-        float[] localAngles = { v1, v2, v3 };
 
         int rLength = Robot_Segments.Length;
 
@@ -83,7 +81,7 @@ public class Robot : MonoBehaviour
         for (int i = 0; i < rLength; i++)
         {
             Robot_Segments[i].theta  = localAngles[i];
-            Robot_Segments[i].gAngle = c.GlobalAngle(i, localAngles);
+            Robot_Segments[i].gAngle = globalAngles[i];
         }
 
         // connect the segments
