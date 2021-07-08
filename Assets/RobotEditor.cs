@@ -23,23 +23,25 @@ public class RobotEditor : Editor
 
     }
     
-    //Very interesting way to create your own inspectors
-    //override public void OnInspectorGUI()
-    //{
-    //    base.OnInspectorGUI();
-    //    var myScript = target as Robot;
-    //    Segment[] segments = myScript.Robot_Segments;
-    //    int rLenght = segments.Length;
-
-    //    myScript.DebugMode = GUILayout.Toggle(myScript.DebugMode, "Debug Mode");
-
-    //    if (myScript.DebugMode)
-    //    {
-    //        for (int i = 0; i < rLenght; i++)
-    //        {
-    //            segments[i].currentLenght = EditorGUILayout.FloatField(segments[i].currentLenght);
-    //        }
-    //    }
-
-    //}
+    
 }
+
+//Very interesting way to create your own inspectors
+//override public void OnInspectorGUI()
+//{
+//    base.OnInspectorGUI();
+//    var myScript = target as Robot;
+//    Segment[] segments = myScript.Robot_Segments;
+//    int rLenght = segments.Length;
+
+//    myScript.DebugMode = GUILayout.Toggle(myScript.DebugMode, "Debug Mode");
+
+//    if (myScript.DebugMode)
+//    {
+//        for (int i = 0; i < rLenght; i++)
+//        {
+//            segments[i].currentLenght = EditorGUILayout.FloatField(segments[i].currentLenght);
+//        }
+//    }
+
+//}

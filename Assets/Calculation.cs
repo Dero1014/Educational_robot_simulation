@@ -12,6 +12,7 @@ public struct RequiredValues
     public float a1;
     public float a2;
     public float a3;
+    public bool v2Neg;
 };
 
 public class Calculation : MonoBehaviour
@@ -29,14 +30,14 @@ public class Calculation : MonoBehaviour
     //              Singleton end                 //
 
     // Get the importante values that are needed for calculation
-    public void GetValues(Vector2 toolPos)
+    public void GetValues(Vector2 toolPos, bool v2Neg)
     {
         IVs.toolPosition = toolPos;
         IVs.a1 = Robot.currentRobot.Robot_Segments[0].a;
         IVs.a2 = Robot.currentRobot.Robot_Segments[1].a;
         IVs.a3 = Robot.currentRobot.Robot_Segments[2].a;
         IVs.phi = _conv.Rad2Angle(Mathf.Acos(IVs.toolPosition.x / IVs.toolPosition.magnitude));
-
+        IVs.v2Neg = v2Neg;
         CalculateValues();
     }
 
@@ -57,12 +58,14 @@ public class Calculation : MonoBehaviour
 
         v2 = (pwx2 + pwy2 - a12 - a22) / (2 * IVs.a1 * IVs.a2);
         v2 = _conv.Rad2Angle(Mathf.Acos(v2));
+        v2 = IVs.v2Neg ? -v2 : v2;
 
         c = Mathf.Sqrt(pwx2 + pwy2);
         alpha = _conv.Rad2Angle(Mathf.Acos(pwx / c));
 
         beta = (pwx2 + pwy2 + a12 - a22) / (2 * IVs.a1 * c);
         beta = _conv.Rad2Angle(Mathf.Acos(beta));
+        beta = IVs.v2Neg ? -beta : beta;
         v1 = alpha - beta;
         v3 = IVs.phi - v1 - v2;
 

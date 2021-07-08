@@ -64,6 +64,8 @@ public class Robot : MonoBehaviour
             Robot_Segments[i].currentLenght = (Robot_Segments[i].endPoint - Robot_Segments[i].startPoint).magnitude;
 
         }
+
+        RobotGraphics.current.UpdateGraphics();
     }
 
     // This function recives the calculated values from Calculation.cs and applies the values to the segments
