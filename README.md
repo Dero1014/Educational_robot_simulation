@@ -20,8 +20,8 @@ The editor features camera controls, inspector and a menu to add items to the sc
 
 ## Camera
 
-[RIGHT MOUSE BUTTON] - Camera rotation
-[LALT] - Camera Focus on object
-[MIDDLE MOUSE BUTTON] - Camera pan
-[LCTRL + MOUSE WHEEL] - Camera move forward/backward
-[MOUSE WHEEL] - zoom
+- RIGHT MOUSE BUTTON - Camera rotation
+- LALT - Camera Focus on object
+- MIDDLE MOUSE BUTTON - Camera pan
+- LCTRL + MOUSE WHEEL - Camera move forward/backward
+- MOUSE WHEEL - zoom
